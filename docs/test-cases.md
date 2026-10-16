@@ -112,18 +112,17 @@
 
 ```bash
 $ npm test
-
-<img width="1380" height="607" alt="image" src="https://github.com/user-attachments/assets/6fb0822f-f676-49a3-b167-fc73d105557d" />
-
 ```
+
+![ผลการรัน npm test](./images/npm-test-result.png)
 
 ผลการตรวจสอบ Production Build ผ่านคำสั่ง `npm run build`:
+
 ```bash
 $ npm run build
-
-<img width="938" height="532" alt="image" src="https://github.com/user-attachments/assets/eba2d322-d850-4de8-9489-bfa45f519c9b" />
-
 ```
+
+![ผลการตรวจสอบ npm run build](./images/npm-build-result.png)
 
 ---
 

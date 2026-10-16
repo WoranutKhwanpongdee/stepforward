@@ -69,6 +69,14 @@ npm run build
 
 ชุดทดสอบครอบคลุมการตรวจสอบข้อมูลฟอร์ม, การคำนวณเกณฑ์ Priority, การป้องกันข้อมูลซ้ำ (Idempotency Key), และความสมบูรณ์ของคลังคำศัพท์ทั้งสองภาษา
 
+**ผลการรันจริง (Test & Build Execution Output):**
+
+- **ผลการรัน `npm test` (7/7 ผ่านทั้งหมด):**
+  ![ผลการรัน npm test](./docs/images/npm-test-result.png)
+
+- **ผลการรัน `npm run build` (Production Build ผ่านสมบูรณ์):**
+  ![ผลการตรวจสอบ npm run build](./docs/images/npm-build-result.png)
+
 ---
 
 ## เอกสารประกอบโครงการ (Documentation)
