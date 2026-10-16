@@ -1,35 +1,41 @@
-# AI Usage & Decision Log — StepForward
+# บันทึกการใช้งาน AI และการตัดสินใจ (AI Usage & Decision Log) — StepForward
 
-## 1. AI Tools Used
+เอกสารฉบับนี้จัดทำขึ้นตามกติกาการใช้งาน AI ของโครงการ TIIS เพื่อระบุเครื่องมือที่ใช้ วัตถุประสงค์ ขั้นตอนการทำงานร่วมกับ AI ข้อความคำสั่ง (Prompt) และจุดที่มนุษย์เป็นผู้ตัดสินใจ ตรวจสอบ และปรับแก้ด้วยตนเองค่ะ
 
-**Tool:** Codex
+---
 
-**Purpose:**
-- Brainstormed the problem, the target users and the proposed solution. 
-- Made a plan for the functionalities of the application and its working with users. 
-- Involved AI in the process of software creation. 
-- Reviewed the validation rules, possible edge cases, as well as testing scenarios. 
+## 1. เครื่องมือ AI ที่ใช้งาน (AI Tools Used)
 
-**Human decisions and responsibilities:**
+**เครื่องมือ:** ChatGPT / Codex
 
-I identified the target users of the project, developed the pilot project scope and made a decision about the most important functionalities of TIIS project. I am responsible for reviewing the already coded software and testing the application and getting validation results and for documenting all the limitations/problems that may arise during the work on the project.
+**วัตถุประสงค์ในการใช้งาน:**
+- ร่วมระดมความคิดเกี่ยวกับปัญหาอุปสรรคของกลุ่มเป้าหมาย และแนวทางในการแก้ปัญหา
+- ช่วยวางโครงสร้างฟังก์ชันการทำงานของระบบ (System Workflow) และ User Flow
+- ช่วยสร้างโค้ดเริ่มต้นและปรับแต่งส่วนประกอบของเว็บแอปพลิเคชัน (Next.js / TypeScript)
+- ร่วมทบทวนเงื่อนไขการตรวจสอบความถูกต้องของข้อมูล (Validation Rules), กรณีขอบเขต (Edge Cases) และแนวทางการเขียนชุดทดสอบ
 
-## 2. Examples of AI-Assisted Work
+**การตัดสินใจและความรับผิดชอบของมนุษย์ (Human Responsibilities):**
+- **การเลือกปัญหาและกลุ่มเป้าหมาย:** ดิฉันเป็นผู้กำหนดกลุ่มเป้าหมายหลัก (ผู้เริ่มทำงาน Early-career workers) กำหนดขอบเขตโครงการนำร่อง 6 สัปดาห์ และตัดสินใจเลือกฟังก์ชันสำคัญที่ตอบโจทย์ทีมงาน 3 คนและงบประมาณ 30,000 บาทค่ะ
+- **การตรวจสอบและปรับแก้โค้ด:** ดิฉันเป็นผู้ตรวจสอบโค้ดที่ AI สร้างขึ้น รันแอปพลิเคชันจริง ตรวจสอบการทำงานของทุกฟังก์ชัน ดำเนินการทดสอบระบบ (Test Cases) ทั้งหมดด้วยตนเอง และบันทึกข้อจำกัดของระบบอย่างโปร่งใสค่ะ
 
-### Example 1: Problem and Solution Planning
+---
+
+## 2. ตัวอย่างการทำงานร่วมกับ AI (Examples of AI-Assisted Work)
+
+### ตัวอย่างที่ 1: การวางแผนปัญหาและแนวทางการแก้ปัญหา (Problem and Solution Planning)
 
 **Prompt:**  
 "Help me design a learner progress and support tracking system for a six-week learning program with 60 participants and a three-person support team."
 
-**Output summary:**  
-ChatGPT proposed StepForward, a learner progress and support tracking system designed to help a three-person team monitor 60 learners during a six-week program. The proposed system includes learner check-ins, a support dashboard with rule-based prioritization, follow-up management, and learner progress history.
+**สรุปผลลัพธ์จาก AI (Output Summary):**  
+AI เสนอแนวคิดระบบ **StepForward** ซึ่งเป็นระบบติดตามความก้าวหน้าและการดูแลผู้เรียน ออกแบบมาเพื่อช่วยให้ทีมงาน 3 คนสามารถดูแลผู้เรียน 60 คนได้อย่างมีประสิทธิภาพ ประกอบด้วยระบบเช็คอินของผู้เรียน, แดชบอร์ดทีมงานพร้อมการจัดลำดับความเร่งด่วนตามกฎ (Rule-based Prioritization), ระบบบันทึกการติดตามผล และประวัติกิจกรรมรายบุคคล พร้อมแนะนำ Data Model, สถานะการดูแล, ตารางนำร่อง และขอบเขตต้นแบบด้วย Next.js, TypeScript และ Tailwind CSS ค่ะ
 
-The output also suggested a data model, support statuses, pilot schedule, budget allocation, evaluation metrics, and a prototype scope using Next.js, TypeScript and Tailwind CSS.
+**การตัดสินใจของดิฉัน (My Decision):**  
+ดิฉันเลือกตัดทอนเฉพาะ Workflow สำคัญหนึ่งส่วนที่จำเป็นที่สุด (การเช็คอิน → การจัดลำดับคะแนน → การติดตามผลของทีม) เพื่อให้สามารถพัฒนา ทดสอบ และส่งมอบต้นแบบที่ใช้งานได้จริงภายในกรอบเวลาที่กำหนด โดยไม่เพิ่มฟีเจอร์ที่ซับซ้อนเกินจำเป็นค่ะ
 
-**My decision:**  
-I selected the core workflow based on the project requirements and kept the implementation small enough to build and test within the available time.
+---
 
-### Example 2: Software Development
+### ตัวอย่างที่ 2: การพัฒนาซอฟต์แวร์ต้นแบบ (Software Development)
 
 **Prompt:**  
 "Build a web application called StepForward — a learner progress and support tracking system for a 6-week learning program with 60 participants and a 3-person support team.
@@ -54,28 +60,38 @@ Requirements:
 - Do not claim tests passed unless they were executed successfully.
 Start by inspecting the project environment, then implement the smallest complete working version. Summarize the files created, commands to run, and any remaining issues."
 
-**Output summary:**  
-The AI coding tool generated or modified application code for the requested workflow.
+**สรุปผลลัพธ์จาก AI (Output Summary):**  
+AI สร้างโค้ดสำหรับแอปพลิเคชันตามฟังก์ชันหลักที่กำหนด รวมถึงคอมโพเนนต์หน้าเว็บ ตรรกะการคำนวณคะแนนความเร่งด่วน และการบันทึกใน LocalStorage ค่ะ
 
-**My verification:**  
-I ran the application and checked whether the main workflow behaved as expected. Actual test cases and results are documented separately in `docs/test-cases.md`.
+**การตรวจสอบของดิฉัน (My Verification):**  
+ดิฉันทำการรันแอปพลิเคชันจริง ตรวจสอบการทำงานของแต่ละฟังก์ชัน และทดสอบกรณีการใช้งานทั้งกรณีปกติและกรณีผิดพลาด โดยบันทึกผลการทดสอบจริงไว้ในเอกสาร [`docs/test-cases.md`](file:///d:/Personal/stepforward/docs/test-cases.md) เรียบร้อยแล้วค่ะ
 
-## 3. Review and Changes by Humans
+---
 
-AI-generated ideas were seen as potential solutions, not just assumed to be accurate.
+## 3. การตรวจสอบและจุดที่ปรับแก้โดยมนุษย์ (Review and Human Decisions)
 
-In terms of design choice, the system is made not to restrict each student to having just one check-in a day but at the same time must allow legitimate updates to progress while avoiding any potential duplications.
+ข้อเสนอและโค้ดที่ AI แนะนำถูกมองเป็นเพียงทางเลือกเบื้องต้น ไม่ได้ถูกนำมาใช้งานโดยปราศจากการตรวจสอบ โดยมีจุดสำคัญที่ดิฉันตัดสินใจปรับแก้ด้วยตนเองดังนี้ค่ะ:
 
-Another limitation imposed onto the prototype is about having only the workflow necessary for helping a student and not introducing any additional features or integrations that might make implementation longer.
+1. **การป้องกันการทำรายการซ้ำ (Duplicate Protection):**  
+   เดิมแนวคิดแรกอาจเป็นการจำกัดไม่ให้ผู้เรียนเช็คอินซ้ำในวันเดียวกัน แต่ดิฉันพิจารณาแล้วว่าในความเป็นจริง ผู้เรียนอาจมีความคืบหน้าเพิ่มเติมในช่วงบ่ายและต้องการบันทึกเพิ่ม จึงตัดสินใจปรับเป็นระบบ **Idempotency Key ประจำรอบฟอร์ม (Submission ID)** แทน เพื่อป้องกันการกดปุ่ม Submit เบิ้ลซ้ำ แต่ยังอนุญาตให้ส่งความคืบหน้าใหม่ได้ในวันเดียวกันค่ะ
+2. **การปรับปรุง UI และความง่ายในการใช้งาน (UI & Accessibility):**  
+   เปลี่ยนจากการใช้ Native `<select>` ของเบราว์เซอร์ มาเป็น **Custom Dropdown** ที่ควบคุมขนาด การคลิก และการแสดงผลบนหน้าจอมือถือได้อย่างสวยงาม พร้อมทั้งจัดระเบียบปุ่ม Check-in ให้เหลือปุ่มหลักเพียงปุ่มเดียว เพื่อลดความสับสนของผู้ใช้ค่ะ
+3. **การปรับบริบทข้อมูลตัวอย่าง (Thai Localization):**  
+   ปรับชุดข้อมูลจำลองผู้เรียน 10 คนจากภาษาอังกฤษ ให้เป็นชื่อและเป้าหมายการพัฒนาทักษะที่สอดคล้องกับบริบทของคนไทยและกลุ่มผู้เริ่มทำงานจริงค่ะ
 
-## 4. Testing and Limitations
+---
 
-The application must be tested against normal usage and error scenarios, including incomplete input, duplicate submissions, persistence after page reload, and support-request handling.
+## 4. การทดสอบและข้อจำกัด (Testing and Limitations)
 
-Only tests that have actually been executed will be reported as passed. Known issues, untested behavior, and limitations will be documented honestly.
+- ระบบได้รับการทดสอบจริงครอบคลุมทั้งกรณีปกติ (การบันทึกข้อมูลสำเร็จ, การคำนวณคะแนน Priority, การอัปเดตหลายครั้งในวันเดียวกัน) และกรณีผิดพลาด (ข้อมูลไม่ครบถ้วน, การส่งซ้ำ) โดยบันทึกผลตามที่รันผ่านจริง (`npm test` 7/7 ผ่าน) ทั้งหมดค่ะ
+- ไม่มีการแต่งเติมผลการทดสอบหรือความคิดเห็นผู้ใช้ขึ้นมาเป็นข้อมูลจริงค่ะ
+- ระบุข้อจำกัดของระบบอย่างโปร่งใส เช่น การเก็บข้อมูลแบบ Local-first ในเครื่อง และการไม่มีระบบ Authentication ตามขอบเขตโครงการนำร่องนะคะ
 
-## 5. Sources and Dependencies
+---
 
-- Next.js documentation: https://nextjs.org/docs
-- TypeScript documentation: https://www.typescriptlang.org/docs/
-- Tailwind CSS documentation: https://tailwindcss.com/docs
+## 5. แหล่งอ้างอิงและส่วนประกอบที่นำมาใช้ (Sources and Dependencies)
+
+- **Next.js Documentation:** https://nextjs.org/docs
+- **TypeScript Documentation:** https://www.typescriptlang.org/docs/
+- **Tailwind CSS Documentation:** https://tailwindcss.com/docs
+- **Node.js Test Runner Documentation:** https://nodejs.org/api/test.html

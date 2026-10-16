@@ -2,23 +2,71 @@ import type { Learner } from "./logic";
 
 const today = new Date().toISOString().slice(0, 10);
 const daysAgo = (n: number) => new Date(Date.now() - n * 86400000).toISOString().slice(0, 10);
-const people = [
-  ["l1","Nicha S.","NS",5,"Needs support","Build confidence speaking English at work.","Practiced a short introduction with a colleague.",2,"I freeze when people speak quickly.","Could we practice a short conversation?"],
-  ["l2","Krit P.","KP",4,"On track","Create a simple monthly budget.","Tracked spending for two weeks and found three areas to adjust.",4,"Remembering to log cash purchases.",""],
-  ["l3","Mali T.","MT",3,"Urgent","Learn spreadsheet basics for my new role.","I haven't been able to start the lessons this week.",1,"My laptop stopped working and I feel behind.","Can someone help me find a way to catch up?"],
-  ["l4","Arun W.","AW",5,"On track","Finish a personal portfolio website.","Built the homepage and shared it for feedback.",5,"Choosing a color palette.",""],
-  ["l5","Pimchanok R.","PR",2,"Needs support","Practice giving clear presentations.","Outlined my talk but haven't practiced aloud yet.",2,"Feeling nervous in front of a group.","A low-pressure practice session would help."],
-  ["l6","Thanawat K.","TK",4,"On track","Use English emails confidently.","Wrote and sent two work emails using the template.",4,"Finding the right opening for a new contact.",""],
-  ["l7","Suda L.","SL",6,"Completed","Create a weekly study routine that sticks.","Finished my six-week plan and kept a regular schedule.",5,"", ""],
-  ["l8","Preecha M.","PM",3,"Needs support","Understand basic project planning.","Started a task list and set a first deadline.",3,"Not sure how to break a large task down.","Could you review my first project plan?"],
-  ["l9","Kanya J.","KJ",1,"Urgent","Improve reading confidence in English.","Missed the last two check-ins and haven't opened the reading pack.",1,"Work hours changed unexpectedly.","Please help me make a realistic catch-up plan."],
-  ["l10","Chai N.","CN",5,"On track","Learn to speak up in team meetings.","Shared one idea in each of my last three meetings.",4,"I still overthink my wording.",""],
+
+const mockTimes = [
+  { hour: 9, minute: 15 },
+  { hour: 14, minute: 30 },
+  { hour: 11, minute: 20 },
+  { hour: 10, minute: 45 },
+  { hour: 16, minute: 10 },
+  { hour: 13, minute: 50 },
+  { hour: 8, minute: 30 },
+  { hour: 15, minute: 25 },
+  { hour: 10, minute: 5 },
+  { hour: 11, minute: 40 },
 ];
 
-export const demoLearners: Learner[] = people.map(([id,name,initials,week,status,goal,progress,confidence,obstacles,request], i) => ({
-  id: String(id), name: String(name), initials: String(initials), cohort: "October 2026", week: Number(week), status: status as Learner["status"],
-  checkIns: [{ id: `c-${id}`, date: daysAgo(i % 3), goal: String(goal), progress: String(progress), confidence: Number(confidence), obstacles: String(obstacles), request: String(request) }],
-  followUps: i % 3 === 0 ? [{ id: `f-${id}`, date: daysAgo(3), action: "Shared a weekly practice plan and checked the first step together.", owner: ["Mook","Beam","Dao"][i % 3], note: "Learner has a clear next action." }] : [],
+const mockCreatedAt = (daysAgoCount: number, i: number) => {
+  const d = new Date(Date.now() - daysAgoCount * 86400000);
+  const time = mockTimes[i % mockTimes.length];
+  d.setHours(time.hour, time.minute, 0, 0);
+  return d.toISOString();
+};
+
+const people = [
+  ["l1", "ณิชา ส. (Nicha)", "NS", 5, "Needs support", "สร้างความมั่นใจในการสื่อสารภาษาอังกฤษในที่ทำงาน", "ได้ลองฝึกพูดแนะนำตัวสั้นๆ กับเพื่อนร่วมงานแล้ว", 2, "ยังรู้สึกเกร็งและฟังไม่ทันเวลาคนอื่นพูดเร็ว", "อยากขอฝึกซ้อมบทสนทนาสั้นๆ สัก 10 นาทีค่ะ"],
+  ["l2", "กฤษณ์ พ. (Krit)", "KP", 4, "On track", "ทำบัญชีรายรับ-รายจ่ายส่วนตัวให้เป็นระบบ", "บันทึกค่าใช้จ่ายต่อเนื่องมาได้ 2 สัปดาห์แล้ว และเริ่มเห็นจุดที่ประหยัดได้", 4, "บางครั้งลืมจดรายการเงินสดทันทีหลังซื้อ", ""],
+  ["l3", "มะลิ ท. (Mali)", "MT", 3, "Urgent", "เรียนรู้สูตร Spreadsheet พื้นฐานเพื่อใช้งานในตำแหน่งใหม่", "สัปดาห์นี้แทบไม่ได้เริ่มบทเรียนเลย รู้สึกตามเพื่อนไม่ทัน", 1, "โน้ตบุ๊กเสียส่งซ่อม งานประจำก็เร่งมาก", "อยากขอคำแนะนำวิธีจัดตารางเรียนชดเชยให้ทันกำหนดค่ะ"],
+  ["l4", "อรุณ ว. (Arun)", "AW", 5, "On track", "ทำ Portfolio เว็บไซต์ส่วนตัวให้เสร็จก่อนจบโครงการ", "เขียนหน้าแรกเสร็จแล้ว และส่งให้รุ่นพี่ช่วยดูฟีดแบ็ก", 5, "กำลังเลือกชุดสีและฟอนต์ที่เข้ากับงาน", ""],
+  ["l5", "พิมพ์ชนก ร. (Pimchanok)", "PR", 2, "Needs support", "ฝึกการนำเสนองานในที่ประชุมให้กระชับและชัดเจน", "ร่างสไลด์และหัวข้อที่จะพูดเสร็จแล้ว แต่ยังไม่กล้าซ้อมพูดออกเสียง", 2, "ตื่นเต้นและกังวลเวลาต้องพูดต่อหน้าคนเยอะๆ", "อยากขอรอบซ้อมพูดแบบกลุ่มเล็กๆ ที่ไม่กดดันค่ะ"],
+  ["l6", "ธนวัฒน์ ก. (Thanawat)", "TK", 4, "On track", "เขียนอีเมลติดต่องานภาษาอังกฤษอย่างมั่นใจ", "ลองใช้ Template ร่างอีเมลตอบลูกค้าจริงไปแล้ว 2 ฉบับ", 4, "ยังไม่แน่ใจเรื่องการเลือกใช้คำทักทายที่เป็นทางการ", ""],
+  ["l7", "สุดา ล. (Suda)", "SL", 6, "Completed", "สร้างนิสัยการอ่านบทความวิชาชีพสัปดาห์ละ 2 เรื่อง", "ทำตามแผน 6 สัปดาห์ครบถ้วน และมีตารางอ่านหนังสือประจำแล้ว", 5, "", ""],
+  ["l8", "ปรีชา ม. (Preecha)", "PM", 3, "Needs support", "เข้าใจพื้นฐานการวางแผนและติดตามงานโปรเจกต์", "เริ่มทำ Task List ใน Notion และกำหนดวันส่งงานแรกแล้ว", 3, "ยังไม่แน่ใจวิธีแบ่งงานใหญ่ให้เป็นงานย่อยๆ ที่วัดผลง่าย", "อยากให้ช่วยรีวิวแผนงานโปรเจกต์แรกให้หน่อยครับ"],
+  ["l9", "กัญญา จ. (Kanya)", "KJ", 1, "Urgent", "พัฒนาทักษะการสรุปใจความจากเอกสารภาษาอังกฤษ", "ขาดส่งเช็คอินไป 2 รอบ และยังไม่ได้เปิดอ่านชุดเอกสารเลย", 1, "หัวหน้าเปลี่ยนกะทำงานกะทันหัน ทำให้ไม่มีเวลา", "ช่วยแนะนำแผนการเรียนชดเชยที่ทำได้จริงทีค่ะ"],
+  ["l10", "ชัย น. (Chai)", "CN", 5, "On track", "ฝึกแสดงความคิดเห็นในที่ประชุมทีม", "ได้ลองออกความเห็นไป 1 เรื่องในที่ประชุม 3 ครั้งล่าสุด", 4, "บางทียังคิดวนไปวนมาเรื่องการเลือกใช้คำพูด", ""],
+];
+
+const followUpActions = [
+  "นัดซ้อมบทสนทนาสั้นๆ 15 นาที และแนะนำเทคนิคการจับใจความคำสำคัญ",
+  "โทรคุยเพื่อรับฟังปัญหา ช่วยวางตารางเรียนชดเชยใหม่ที่ทำได้จริงใน 2 สัปดาห์",
+  "นัดซ้อมพรีเซนต์ตัวต่อตัวแบบไม่กดดัน พร้อมแนะโครงสร้างการสรุปประเด็น",
+  "ช่วยตรวจรีวิวร่างแผนงาน Task List และแนะนำวิธีการตั้ง Milestone ย่อย",
+];
+
+export const demoLearners: Learner[] = people.map(([id, name, initials, week, status, goal, progress, confidence, obstacles, request], i) => ({
+  id: String(id),
+  name: String(name),
+  initials: String(initials),
+  cohort: "ตุลาคม 2569",
+  week: Number(week),
+  status: status as Learner["status"],
+  checkIns: [{
+    id: `c-${id}`,
+    date: daysAgo(i % 3),
+    createdAt: mockCreatedAt(i % 3, i),
+    goal: String(goal),
+    progress: String(progress),
+    confidence: Number(confidence),
+    obstacles: String(obstacles),
+    request: String(request),
+  }],
+  followUps: i % 3 === 0 ? [{
+    id: `f-${id}`,
+    date: daysAgo(2),
+    action: followUpActions[i % followUpActions.length],
+    owner: ["Mook", "Beam", "Dao"][i % 3],
+    note: "ผู้เรียนเข้าใจขั้นตอนต่อไปและมีความมั่นใจเพิ่มขึ้น",
+  }] : [],
 }));
 
 export const todayISO = today;

@@ -1,0 +1,163 @@
+# Test Cases & Verification Report — StepForward
+
+เอกสารบันทึกผลการทดสอบระบบต้นแบบ **StepForward** ตามข้อกำหนดภารกิจที่ 2 ครอบคลุมกรณีการใช้งานปกติ (Normal Cases), กรณีผิดพลาด (Error / Edge Cases), ตัวอย่างการแก้ไขก่อนและหลัง (Before & After), และหลักฐานผลการทดสอบจริง
+
+---
+
+## 1. สรุปผลการทดสอบ 5 กรณีสำคัญ
+
+| กรณีที่ | ประเภท | สถานการณ์ทดสอบ | ผลลัพธ์ที่คาดหวัง | ผลการทดสอบจริง |
+|---|:---:|---|---|:---:|
+| **Case 1** | Normal | ผู้เรียนกรอก Check-in ครบถ้วน โดยมีความมั่นใจต่ำ (1–2) และมีคำขอความช่วยเหลือ | บันทึกสำเร็จ, เปลี่ยนสถานะเป็น Needs support อัตโนมัติ, คำนวณคะแนน Priority สูง (จัดอยู่ในกลุ่ม "Today") | **ผ่าน (PASS)** |
+| **Case 2** | Error | กรอกข้อมูลไม่ครบ (เว้นว่างเป้าหมาย หรือคะแนนความมั่นใจไม่อยู่ในช่วง 1–5) | ระบบปฏิเสธการบันทึก ส่ง Validation Key ที่ถูกต้อง และแสดงข้อความเตือนแก่ผู้ใช้ | **ผ่าน (PASS)** |
+| **Case 3** | Error | ส่งข้อมูลซ้ำด้วย Submission ID เดิม (เช่น ผู้ใช้กดปุ่มบันทึกเบิ้ล หรือเน็ตหน่วง) | ระบบปฏิเสธการบันทึกซ้ำ (Idempotency Protection) ไม่เพิ่มข้อมูลขยะในประวัติ | **ผ่าน (PASS)** |
+| **Case 4** | Normal | ผู้เรียนส่งอัปเดตความคืบหน้าเพิ่มเติมมากกว่า 1 ครั้งในวันเดียวกัน (เปิดฟอร์มใหม่) | ระบบยอมรับการบันทึก โดยแยกเป็น Check-in รายการใหม่ตาม Timestamp ไม่ถูกบล็อก | **ผ่าน (PASS)** |
+| **Case 5** | Normal | ทีมงานบันทึกการติดตามผล (Follow-up) และอัปเดตสถานะผู้เรียน | บันทึกลงใน Activity History ของผู้เรียน, คะแนน Priority ลดลงตามบริบทที่ได้รับการดูแลแล้ว | **ผ่าน (PASS)** |
+
+---
+
+## 2. รายละเอียดแต่ละกรณีทดสอบ
+
+### กรณีที่ 1: การเช็คอินปกติและคำนวณ Priority อัตโนมัติ (Happy Path)
+- **เงื่อนไขนำเข้า:** 
+  - Goal: "Improve reading confidence in English"
+  - Progress: "Read chapter 1"
+  - Confidence: 1 (ต่ำมาก)
+  - Request: "Please help me make a realistic catch-up plan"
+- **การตอบสนองของระบบ:**
+  1. สร้างรายการ Check-in ใหม่พร้อมประทับเวลา ISO Timestamp
+  2. ปรับสถานะของผู้เรียนเป็น `Needs support`
+  3. ฟังก์ชัน `priorityScore()` บวกคะแนน: สถานะ Needs support (+3), Confidence <= 2 (+3), มี Request (+2), ขาด Follow-up ล่าสุด (+1) = คะแนนรวมสูง (>= 7)
+  4. แสดงผลป้ายกำกับ Priority เป็น **"Today (วันนี้)"** บนแดชบอร์ดเพื่อให้ทีมงานเห็นและติดต่อก่อน
+- **สถานะ:** ผ่าน (ทดสอบใน `tests/logic.test.ts`)
+
+### กรณีที่ 2: การตรวจสอบความถูกต้องของข้อมูล (Validation Error)
+- **เงื่อนไขนำเข้า:** 
+  - ส่งฟอร์มโดย Goal เป็นค่าว่าง `""` หรือ Confidence เป็น `6` (ไม่อยู่ใน 1–5)
+- **การตอบสนองของระบบ:**
+  1. ฟังก์ชัน `validateCheckIn()` ตรวจจับข้อผิดพลาดและส่ง `{ valid: false, errors: { goal: "validationGoal" } }`
+  2. ฟอร์มไม่บันทึกลง LocalStorage
+  3. แสดงข้อความแจ้งเตือนสีแดงในภาษาที่ผู้ใช้เลือก:
+     - ภาษาไทย: *"กรุณาระบุเป้าหมายการเรียนรู้"*
+     - ภาษาอังกฤษ: *"Please add a learning goal."*
+- **สถานะ:** ผ่าน (ทดสอบใน `tests/logic.test.ts` และ `tests/i18n.test.ts`)
+
+### กรณีที่ 3: การป้องกันการทำรายการซ้ำ (Duplicate / Idempotency Protection)
+- **เงื่อนไขนำเข้า:** 
+  - ฟอร์ม Check-in สร้าง `submissionId` (UUID) ประจำรอบการเปิดฟอร์ม
+  - มีการเรียก `recordCheckIn` ด้วย `submissionId` เดิมซ้ำสองครั้ง
+- **การตอบสนองของระบบ:**
+  1. การส่งครั้งแรก: บันทึกข้อมูลสำเร็จ คืนค่า `{ duplicate: false }`
+  2. การส่งครั้งที่สอง: ระบบตรวจพบ ID ซ้ำ คืนค่า `{ duplicate: true }` โดยไม่เพิ่มจำนวนรายการในอาเรย์
+  3. UI แสดงข้อความเตือนป้องกันการบันทึกเบิ้ล
+- **สถานะ:** ผ่าน (ทดสอบใน `tests/logic.test.ts`)
+
+### กรณีที่ 4: การอนุญาตให้อัปเดตความคืบหน้าหลายครั้งในวันเดียวกัน
+- **เงื่อนไขนำเข้า:** 
+  - ผู้เรียนเช็คอินรอบเช้า ("Practiced once")
+  - ต่อมาในช่วงบ่าย ผู้เรียนฝึกเพิ่มเติมและต้องการเช็คอินรอบสอง ("Practiced again") ในวันเดียวกัน
+- **การตอบสนองของระบบ:**
+  1. เมื่อเปิดฟอร์มรอบใหม่ ระบบสร้าง Submission ID ใหม่
+  2. ข้อมูลทั้งสองรอบถูกบันทึกลงประวัติโดยมี Timestamp ต่างกัน และแสดงผลเรียงจากล่าสุดไปเก่าสุด
+- **สถานะ:** ผ่าน (ทดสอบใน `tests/logic.test.ts`)
+
+### กรณีที่ 5: การบันทึกการติดตามผลของทีมงาน (Support Follow-up)
+- **เงื่อนไขนำเข้า:** 
+  - ทีมงานเปิด Drawer ของผู้เรียนที่ต้องการความช่วยเหลือ
+  - ระบุ Action: *"โทรปรึกษาและช่วยแบ่งเป้าหมายย่อยเป็น 3 ขั้นตอน"*, ผู้รับผิดชอบ: *"Mook"*
+- **การตอบสนองของระบบ:**
+  1. บันทึก Action พร้อมวันที่และชื่อผู้ดูแลลงใน Activity History
+  2. ทีมงานสามารถเปลี่ยนสถานะผู้เรียนจาก `Needs support` กลับเป็น `On track` ได้ทันที
+  3. ข้อมูลถูกซิงค์บันทึกลง `localStorage` อัตโนมัติ
+- **สถานะ:** ผ่าน (ทดสอบผ่านการทำงานจริงบนเว็บแอป)
+
+---
+
+## 3. ตัวอย่างการแก้ไขก่อนและหลังการทดสอบ (Before & After)
+
+### ตัวอย่างที่ 1: การปรับเกณฑ์ Duplicate Submission จากตรวจ "วันที่" มาเป็น "Session Idempotency Key"
+
+- **ปัญหาก่อนแก้ไข (Before):**
+  เดิมระบบตรวจสอบไม่ให้บันทึกซ้ำโดยอิงจากวันที่ (`date === today`) ส่งผลให้ผู้เรียนไม่สามารถส่งอัปเดตความคืบหน้าเพิ่มเติมในวันเดียวกันได้ แม้จะมีพัฒนาการเพิ่มขึ้นจริง
+  ```typescript
+  // ก่อนแก้ไข: เช็คว่าวันนี้เคยส่งหรือยัง (ทำให้ส่งซ้ำวันเดิมไม่ได้เลย)
+  if (learner.checkIns.some(c => c.date === today)) {
+    return { error: "Already checked in today" };
+  }
+  ```
+
+- **หลังแก้ไข (After):**
+  เปลี่ยนมาใช้โมเดล **Idempotency Key** ประจำฟอร์มเซสชัน ทำให้ผู้เรียนส่งอัปเดตใหม่ได้ตลอดเวลา แต่ยังป้องกันการกดปุ่ม Submit เบิ้ลได้อย่างแม่นยำ
+  ```typescript
+  // หลังแก้ไข: ตรวจสอบจาก unique submission ID
+  if (learners.some(l => l.checkIns.some(c => c.id === submissionId))) {
+    return { learners, duplicate: true as const };
+  }
+  ```
+
+---
+
+### ตัวอย่างที่ 2: การเปลี่ยน Dropdown จาก Native Select เป็น Custom Dropdown
+
+- **ปัญหาก่อนแก้ไข (Before):**
+  ใช้ `<select>` ดั้งเดิมของเบราว์เซอร์ ซึ่งแสดงผล UI เป็นกล่องเทาของระบบปฏิบัติการ ควบคุมความโค้งมนและระยะห่างบนหน้าจอมือถือได้ยาก
+- **หลังแก้ไข (After):**
+  สร้างคอมโพเนนต์ `CustomSelect` ของระบบเอง ที่มีลูกศรหมุนเมื่อเปิด, รองรับการปิดเมื่อคลิกด้านนอก (Outside Click Detection), มีไอคอนเครื่องหมายถูกที่ตัวเลือกปัจจุบัน และขยายระยะสัมผัส (Touch Target) ให้อยู่ที่ 44px ตามมาตรฐาน Mobile Accessibility
+
+---
+
+## 4. หลักฐานผลการรันการทดสอบ (Actual Test Execution Output)
+
+ผลการรันจริงผ่านคำสั่ง `npm test` ด้วย Node.js Native Test Runner:
+
+```bash
+$ npm test
+
+> stepforward@1.0.0 test
+> node --experimental-strip-types --test tests/*.test.ts
+
+✔ Thai and English catalogs contain a translation for every UI key (2.2137ms)
+✔ check-in validation and success text are available in both languages (18.2747ms)
+✔ localized labels format interpolation values with locale number rules (0.3794ms)
+✔ required fields and confidence are validated (0.7581ms)
+✔ a learner can submit different progress updates on the same day (1.3446ms)
+✔ repeating the same submission ID is idempotently rejected (0.3634ms)
+✔ priority rules put urgent low-confidence requests first (0.1659ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 172.714
+```
+
+ผลการตรวจสอบ Production Build ผ่านคำสั่ง `npm run build`:
+```bash
+$ npm run build
+
+> stepforward@1.0.0 build
+> next build
+
+ ✓ Compiled successfully in 2.1s
+   Linting and checking validity of types ...
+   Collecting page data ...
+ ✓ Generating static pages (4/4)
+   Finalizing page optimization ...
+
+Route (app)                                 Size  First Load JS
+┌ ○ /                                    10.9 kB         114 kB
+└ ○ /_not-found                            995 B         104 kB
++ First Load JS shared by all             103 kB
+
+○  (Static)  prerendered as static content
+```
+
+---
+
+## 5. ข้อจำกัดและสิ่งที่จะพัฒนาต่อในอนาคต (Limitations & Future Work)
+
+1. **การทำงานแบบ Local-first:** ต้นแบบนี้จัดเก็บข้อมูลใน `localStorage` ของเบราว์เซอร์เครื่องที่เปิดใช้งาน ทำให้ยังไม่รองรับการซิงค์ข้อมูลแบบ Real-time ข้ามเครื่องของทีมงานทั้ง 3 คน
+2. **ระบบสิทธิ์การเข้าใช้งาน (Role-based Access):** เนื่องจากไม่มีระบบ Login หน้าแดชบอร์ดจึงสามารถเข้าถึงได้ทุกคน ในระบบจริงควรแยกหน้า View ของผู้เรียนและหน้า Dashboard ของทีมงานออกจากกัน
+3. **การคำนวณ Priority Score:** เกณฑ์คะแนนปัจจุบันเป็น Rule-based ที่กำหนดขึ้นตามสมมติฐาน ในโครงการนำร่องจริงควรมีการเก็บ Feedback จากทีมงานทั้ง 3 คนเพื่อปรับจูนค่าน้ำหนักคะแนนให้ตรงกับการทำงานจริงมากยิ่งขึ้น

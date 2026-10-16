@@ -1,46 +1,89 @@
-# StepForward
+# StepForward (ก้าวต่อ)
 
-A small learner progress and support tracker for a six-week program. The demo is seeded with ten fictional learners and stores updates in the current browser using localStorage.
+ต้นแบบระบบติดตามความก้าวหน้าและจัดลำดับการดูแลผู้เรียน สำหรับโครงการนำร่อง 6 สัปดาห์ (ผู้เรียน 60 คน · ทีมหลัก 3 คน · งบประมาณ 30,000 บาท) เพื่อช่วยให้ทีมงานขนาดเล็กสามารถค้นหาและเข้าช่วยเหลือผู้เรียนที่ติดขัดได้ทันท่วงที
 
-## Run locally
+ระบบมาพร้อมข้อมูลจำลองผู้เรียน 10 คน และบันทึกข้อมูลในเบราว์เซอร์ผ่าน `localStorage` โดยไม่ต้องพึ่งพาเซิร์ฟเวอร์หรือฐานข้อมูลภายนอก
 
-Requirements: Node.js 20.9 or newer and npm.
+---
+
+## วิธีติดตั้งและรันในเครื่อง (Run Locally)
+
+**ความต้องการของระบบ:** Node.js เวอร์ชัน 20.9 ขึ้นไป และ npm
 
 ```bash
+# 1. ติดตั้ง Dependencies
 npm install
+
+# 2. เริ่มต้น Dev Server
 npm run dev
 ```
 
-Open the local URL printed by Next.js (usually http://localhost:3000).
+เปิดเว็บเบราว์เซอร์ไปที่: **http://localhost:3000**
 
-## What it includes
+---
 
-- Check-in form for learning goal, progress, confidence, obstacles, and support requests.
-- Support dashboard with search, status filters, rule-based follow-up priority, and learner profiles.
-- Follow-up action records, status changes, and an activity history per learner.
-- Browser localStorage persistence, with a restore demo data control.
-- English and Thai UI translations, a persistent TH / EN switch, and locale-aware date/number formatting.
-- Required-field validation, duplicate-submit protection per check-in form, plus visible success/error messages.
-- Responsive layout, semantic form labels, keyboard-operable learner rows and controls, and screen-reader status announcements.
+## คุณสมบัติหลักของระบบ (What it includes)
 
-## Prioritization
+- **ฟอร์มเช็คอินของผู้เรียน (Check-in Form):** บันทึกเป้าหมายการเรียนรู้, สิ่งที่ทำสำเร็จ, ระดับความมั่นใจ (1–5), อุปสรรค และคำขอความช่วยเหลือ พร้อมการตรวจสอบฟิลด์บังคับ
+- **แดชบอร์ดจัดลำดับการดูแล (Priority Dashboard):** คำนวณความเร่งด่วนอัตโนมัติด้วยกฎที่อธิบายได้ชัดเจน พร้อมระบบค้นหาและตัวกรองสถานะ
+- **บันทึกการติดตามผล (Follow-up Management):** ทีมงานสามารถบันทึกการช่วยเหลือ, ระบุผู้รับผิดชอบ (Mook, Beam, Dao) และเปลี่ยนสถานะผู้เรียนได้
+- **ประวัติกิจกรรมรายบุคคล (Activity History):** แสดงไทม์ไลน์การเช็คอินและการติดตามผลของแต่ละคนแบบย้อนหลัง
+- **ระบบจัดเก็บข้อมูล (LocalStorage Persistence):** จดจำข้อมูลในเครื่องพร้อมการแจ้งเตือนกรณี Storage เต็ม และมีปุ่มกู้คืนข้อมูลตัวอย่าง (Restore demo data)
+- **รองรับ 2 ภาษา (Bilingual TH / EN):** สลับภาษาได้ทันทีผ่านปุ่มบน Topbar โดยไม่กระทบต่อข้อมูลที่เคยบันทึกไว้
+- **Custom UI & Accessibility:** ออกแบบฟอนต์ภาษาไทยและอังกฤษให้อ่านง่าย ปุ่ม Dropdown แบบกำหนดเอง และรองรับการใช้งานบนหน้าจอมือถือ (Responsive Design)
 
-Priority is intentionally explainable: urgent status adds 5 points; needs-support adds 3; confidence 1–2 adds 3; a support request adds 2; an obstacle adds 1; and an unanswered check-in adds 1. Completed learners score zero. Scores of 7+ are marked Today, 4–6 This week, and 1–3 When available. The team can still manually update a learner's status.
+---
 
-## Tests
+## เกณฑ์การคำนวณความเร่งด่วน (Prioritization Rules)
+
+ระบบใช้สูตรการให้คะแนนที่โปร่งใสและอธิบายได้ (Explainable Scoring):
+
+| เงื่อนไข | คะแนนที่ได้ |
+|---|:---:|
+| สถานะปัจจุบันเป็น **เร่งด่วน (Urgent)** | +5 |
+| สถานะปัจจุบันเป็น **ต้องดูแล (Needs support)** | +3 |
+| ระดับความมั่นใจต่ำ (1–2 คะแนน) | +3 |
+| มีคำขอความช่วยเหลือ (Support Request) | +2 |
+| ระบุอุปสรรคในการเรียนรู้ (Obstacle) | +1 |
+| ยังไม่ได้รับการติดตามผลหลังเช็คอินล่าสุด | +1 |
+| สถานะ **เสร็จสิ้น (Completed)** | 0 (เคลียร์แล้ว) |
+
+**การจัดกลุ่มการติดตามผล:**
+- **7 คะแนนขึ้นไป:** จัดอยู่ในกลุ่ม **วันนี้ (Today)** — ต้องติดตามด่วนที่สุด
+- **4–6 คะแนน:** จัดอยู่ในกลุ่ม **สัปดาห์นี้ (This week)**
+- **1–3 คะแนน:** จัดอยู่ในกลุ่ม **เมื่อสะดวก (When available)**
+
+*(หมายเหตุ: ทีมงานยังคงสามารถคลิกเปลี่ยนสถานะของผู้เรียนได้เองตลอดเวลาตามบริบทจริง)*
+
+---
+
+## การทดสอบระบบ (Tests)
 
 ```bash
+# รันชุดทดสอบ Logic และระบบภาษา (7/7 ผ่านทั้งหมด)
 npm test
+
+# ตรวจสอบความถูกต้องของการ Build
+npm run build
 ```
 
-The tests cover check-in field validation and the priority scoring rules. `npm run build` checks the production build.
+ชุดทดสอบครอบคลุมการตรวจสอบข้อมูลฟอร์ม, การคำนวณเกณฑ์ Priority, การป้องกันข้อมูลซ้ำ (Idempotency Key), และความสมบูรณ์ของคลังคำศัพท์ทั้งสองภาษา
 
-The UI language is stored separately from learner data under `stepforward-language-v1`, so switching languages does not rewrite check-ins, follow-ups, or learner statuses. User-entered learner content is shown as entered; only interface text is translated.
+---
 
-## Decisions and limitations
+## เอกสารประกอบโครงการ (Documentation)
 
-- This is a local-first demo: browser data is not shared across devices or team members, and there is no account or server backup.
-- The dashboard includes cohort-level sample metrics to make the demo useful at a glance. In particular, check-in rate is illustrative rather than calculated from real attendance records.
-- The program is seeded with 10 learners for a 60-person pilot; add or replace demo records in `lib/demo-data.ts` when adapting it.
-- localStorage is best-effort. If it is blocked or full, the UI shows an alert and keeps working for the current page session. Restoring demo data replaces the locally saved learner list.
-- A learner may have multiple check-ins per day. Re-submitting the same form session is ignored through its unique check-in ID; opening a new form creates a new ID.
+เอกสารสรุปและหลักฐานการทำงานตามข้อกำหนดของโครงการ จัดเก็บอยู่ในโฟลเดอร์ [`docs/`](file:///d:/Personal/stepforward/docs):
+
+1. **[`docs/summary.md`](file:///d:/Personal/stepforward/docs/summary.md):** เอกสารสรุปโครงการ 2 หน้า ครอบคลุมการวิเคราะห์ปัญหาในภารกิจที่ 1, แนวทางต้นแบบในภารกิจที่ 2, และข้อจำกัดที่ยอมรับ
+2. **[`docs/test-cases.md`](file:///d:/Personal/stepforward/docs/test-cases.md):** บันทึกผลการทดสอบ 5 กรณี (กรณีปกติและกรณีผิดพลาด), ตัวอย่างการแก้ไข Before & After, และผลการรันจริง
+3. **[`docs/ai-usage.md`](file:///d:/Personal/stepforward/docs/ai-usage.md):** บันทึกการใช้เครื่องมือ AI, คำสั่งตัวอย่าง, จุดที่มนุษย์ตัดสินใจและปรับแก้ และแหล่งอ้างอิง
+
+---
+
+## การตัดสินใจเชิงเทคนิคและข้อจำกัด (Decisions & Limitations)
+
+- **Local-first Demo:** ข้อมูลจะถูกจัดเก็บใน Browser LocalStorage ของเครื่องที่เปิดใช้งาน ยังไม่ได้ซิงค์แบบ Real-time ข้ามอุปกรณ์ของทีมงาน
+- **ไม่มีระบบ Authentication:** ตามขอบเขตที่โจทย์กำหนด เพื่อให้โฟกัสที่ Workflow หลักของการแก้ปัญหาการติดตามผู้เรียน
+- **รองรับการเช็คอินหลายรอบในวันเดียว:** ป้องกันการกด Submit เบิ้ลด้วย Unique Submission ID ประจำรอบฟอร์ม แต่เปิดให้ผู้เรียนส่งอัปเดตใหม่ในวันเดียวกันได้หากมีความคืบหน้าเพิ่มเติม
+- **ข้อมูลจำลอง 10 คน:** เพียงพอสำหรับการสาธิตสัดส่วนและพฤติกรรมของรุ่น 60 คน สามารถแก้ไขหรือเพิ่มข้อมูลเพิ่มเติมได้ใน [`lib/demo-data.ts`](file:///d:/Personal/stepforward/lib/demo-data.ts)
