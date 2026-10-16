@@ -1,0 +1,9 @@
+{
+  "name": "stepforward",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": { "dev": "next dev", "build": "next build", "start": "next start", "test": "node --experimental-strip-types --test tests/*.test.ts" },
+  "dependencies": { "next": "^15.5.0", "react": "^19.1.0", "react-dom": "^19.1.0" },
+  "devDependencies": { "@types/node": "^22.0.0", "@types/react": "^19.0.0", "@types/react-dom": "^19.0.0", "typescript": "^5.8.0", "tailwindcss": "^4.1.0", "@tailwindcss/postcss": "^4.1.0" }
+}
