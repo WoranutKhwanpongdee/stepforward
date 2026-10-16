@@ -113,53 +113,15 @@
 ```bash
 $ npm test
 
-> stepforward@1.0.0 test
-> node --experimental-strip-types --test tests/*.test.ts
+<img width="1380" height="607" alt="image" src="https://github.com/user-attachments/assets/6fb0822f-f676-49a3-b167-fc73d105557d" />
 
-✔ Thai and English catalogs contain a translation for every UI key (1.4507ms)
-✔ check-in validation and success text are available in both languages (13.2366ms)
-✔ localized labels format interpolation values with locale number rules (0.4405ms)
-✔ required fields and confidence are validated (0.7342ms)
-✔ a learner can submit different progress updates on the same day (1.0428ms)
-✔ repeating the same submission ID is idempotently rejected (0.1789ms)
-✔ priority rules put urgent low-confidence requests first (0.1488ms)
-ℹ tests 7
-ℹ suites 0
-ℹ pass 7
-ℹ fail 0
-ℹ cancelled 0
-ℹ skipped 0
-ℹ todo 0
-ℹ duration_ms 165.2094
 ```
 
 ผลการตรวจสอบ Production Build ผ่านคำสั่ง `npm run build`:
 ```bash
 $ npm run build
 
-> stepforward@1.0.0 build
-> next build
-
-   ▲ Next.js 15.5.28
-
-   Creating an optimized production build ...
- ✓ Compiled successfully in 1027ms
- ✓ Linting and checking validity of types
- ✓ Collecting page data
- ✓ Generating static pages (4/4)
- ✓ Collecting build traces
- ✓ Finalizing page optimization
-
-Route (app)                                 Size  First Load JS    
-┌ ○ /                                    11.6 kB         114 kB
-└ ○ /_not-found                            995 B         104 kB
-+ First Load JS shared by all             103 kB
-  ├ chunks/255-b1e2483a7e02feee.js       46.6 kB
-  ├ chunks/4bd1b696-c023c6e3521b1417.js  54.2 kB
-  └ other shared chunks (total)          1.97 kB
-
-
-○  (Static)  prerendered as static content
+<img width="938" height="532" alt="image" src="https://github.com/user-attachments/assets/eba2d322-d850-4de8-9489-bfa45f519c9b" />
 
 ```
 
